@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  app:
+    container_name: lett-app
+    image: localhost/php8.2:dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - user=dev
+        - uid=1000
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www/
+    restart: unless-stopped
+    networks:
+      - lett
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  nginx:
+    container_name: lett-nginx
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "8001:80"
+    volumes:
+      - ./docker-compose/nginx/:/etc/nginx/conf.d/
+      - ./:/var/www
+    networks:
+      - lett
+
+
+networks:
+  lett:
+    name: lett
