@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('skus', function (Blueprint $table) {
             $table->id();
             $table->string('ean');
+            $table->integer('external_id');
+
             $table->json('retailer_sku_match');
             $table->json('content');
 
@@ -21,7 +23,6 @@ return new class extends Migration
 
             $table->unsignedBigInteger('brick_id');
             $table->foreign('brick_id')->references('id')->on('bricks');
-
 
             $table->unsignedBigInteger('brand_id');
             $table->foreign('brand_id')->references('id')->on('brands');
