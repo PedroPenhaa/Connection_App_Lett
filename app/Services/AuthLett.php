@@ -38,11 +38,12 @@ class AuthLett
     }
 
 
-    public static function getData(string $service, int $limit = 10)
+    public static function getData(string $service, int $limit = 10, int $page)
     {
+        dump($service, $limit, $page);
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' .  self::getToken(),
-        ])->get(self::$credentials['baseUrl'] . "/{$service}?limit={$limit}");
+        ])->get(self::$credentials['baseUrl'] . "/{$service}?limit={$limit}&page={$page}");
 
         $body = $response->body();
 
