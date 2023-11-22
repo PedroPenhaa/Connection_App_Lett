@@ -7,6 +7,7 @@ use Illuminate\Console\Command;
 use App\Models\Sku;
 use App\Models\Brick;
 use App\Models\Brand;
+use Illuminate\Support\Facades\DB;
 
 class Skus extends Command
 {
@@ -29,8 +30,7 @@ class Skus extends Command
      */
     public function handle()
     {
-        // Método Principal
-        // Recupera os registros da tabela Family, reduzindo em um array associativo usando o 'externel_id' como chave;
+
         $bricks = Brick::get()->reduce(function ($acc, $brick) {
             $acc[$brick->external_id] = $brick;
             return $acc;
@@ -41,37 +41,73 @@ class Skus extends Command
             return $acc;
         });
 
-
-
         $currentPage = 1;
 
+        $data = AuthLett::getData('skus', 100, $currentPage);
+        $decodedData = json_decode($data, true);
+        $pages = $decodedData['paging']['number_of_pages'];
+
+        $bar = $this->output->createProgressBar($pages);
+
+
         do {
-            // Obter dados do serviço AuthLett para a página atual
-            $data = AuthLett::getData('skus', 2, $currentPage);
+
+            $data = AuthLett::getData('skus', 100, $currentPage);
             $decodedData = json_decode($data, true);
             $pages = $decodedData['paging']['number_of_pages'];
 
-            // Iterando sobre os dados recebidos
+            /*
+                    $jsonData = json_encode($decodedData);
+
+                    if ($jsonData !== false) {
+                        // Output the JSON data
+                        dd($jsonData);
+                    } else {
+                        // Handle JSON encoding errors
+                        echo "Error encoding data to JSON";
+                    }
+                */
+
+            DB::beginTransaction();
+
             foreach ($decodedData['data'] as $segmentData) {
 
-                //Atualiza ou Cria um registro na tabela.      
-                Sku::updateOrCreate(
-                    // Primeiro Array que será para validação.
+                /*
+
                     [
                         'external_id' => $segmentData['id'],
                         'brick_id' => $bricks[$segmentData['brick_id']]->id,
                         'brand_id' => $brands[$segmentData['brand_id']]->id
                     ],
-                    // Array que pode ser alterado os dados
+
+                */
+
+
+                Sku::updateOrCreate(
+
                     [
-                        'ean' => $segmentData['ean'],
-                        'retailer_sku_match' => $segmentData['retailer_sku_match'],
-                        'content' => $segmentData['content'],
+                        'ean' => $segmentData['ean'] ?? 000,
+                        'external_id' => $segmentData['id'],
+                    ],
+                    [
+                        'ean' => $segmentData['ean'] ?? 000,
+                        'external_id' => $segmentData['id'],
+                        'retailer_sku_match' => json_encode($segmentData['retailer_sku_match']),
+                        'content' => json_encode($segmentData['content']),
+                        'brick_id' => $bricks[$segmentData['brick_id']]->id,
+                        'brand_id' => $brands[$segmentData['brand_id']]->id
                     ]
+
                 );
             }
-            // Incrementa a página atual para obter os dados da próxima página
+
+            DB::commit();
+
             $currentPage++;
+
+            $bar->advance();
         } while ($currentPage <= $pages);
+
+        $bar->finish();
     }
 }

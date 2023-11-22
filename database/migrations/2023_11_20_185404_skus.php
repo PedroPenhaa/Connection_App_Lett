@@ -19,14 +19,10 @@ return new class extends Migration
             $table->json('retailer_sku_match');
             $table->json('content');
 
-            //foreign keys.
-
             $table->unsignedBigInteger('brick_id');
             $table->foreign('brick_id')->references('id')->on('bricks');
-
             $table->unsignedBigInteger('brand_id');
             $table->foreign('brand_id')->references('id')->on('brands');
-            // Adicione outros campos conforme necessário
 
             $table->timestamps();
         });
