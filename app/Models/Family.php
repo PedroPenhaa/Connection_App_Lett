@@ -9,6 +9,5 @@ class Family extends Model
 {
     use HasFactory;
 
-    // Especifica quais atributos podem ser preenchidos/Alterados no banco.
     protected $fillable = ['name',  'external_id', 'segment_id'];
 }
