@@ -39,7 +39,7 @@ class Familys extends Command
 
         do {
             // Obter dados do serviço AuthLett para a página atual
-            $data = AuthLett::getData('families', 5, $currentPage);
+            $data = AuthLett::getData('families', 10, $currentPage);
             $decodedData = json_decode($data, true);
             $pages = $decodedData['paging']['number_of_pages'];
 

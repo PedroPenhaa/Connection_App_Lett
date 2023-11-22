@@ -39,7 +39,7 @@ class Classes extends Command
 
         do {
             // Obter dados do serviço AuthLett para a página atual
-            $data = AuthLett::getData('classes', 5, $currentPage);
+            $data = AuthLett::getData('classes', 100, $currentPage);
             $decodedData = json_decode($data, true);
             $pages = $decodedData['paging']['number_of_pages'];
 

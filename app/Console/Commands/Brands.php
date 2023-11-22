@@ -39,7 +39,7 @@ class Brands extends Command
 
         do {
             // Obter dados do serviço AuthLett para a página atual
-            $data = AuthLett::getData('brands', 250, $currentPage);
+            $data = AuthLett::getData('brands', 100, $currentPage);
             $decodedData = json_decode($data, true);
             $pages = $decodedData['paging']['number_of_pages'];
 

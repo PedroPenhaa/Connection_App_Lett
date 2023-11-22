@@ -31,7 +31,7 @@ class Segments extends Command
 
         do {
             // Obter dados do serviço AuthLett
-            $data = AuthLett::getData('segments', 4, $currentPage);
+            $data = AuthLett::getData('segments', 100, $currentPage);
             // Decodificar os dados JSON, ajuste conforme necessário
             $decodedData = json_decode($data, true);
             $pages = $decodedData['paging']['number_of_pages'];
