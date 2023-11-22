@@ -71,17 +71,6 @@ class Skus extends Command
 
             foreach ($decodedData['data'] as $segmentData) {
 
-                /*
-
-                    [
-                        'external_id' => $segmentData['id'],
-                        'brick_id' => $bricks[$segmentData['brick_id']]->id,
-                        'brand_id' => $brands[$segmentData['brand_id']]->id
-                    ],
-
-                */
-
-
                 Sku::updateOrCreate(
 
                     [
