@@ -43,7 +43,7 @@ class AuthLett
         //dump($service, $limit, $page);
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' .  self::getToken(),
-        ])->timeout(60 * 8)->get(self::$credentials['baseUrl'] . "/{$service}?limit={$limit}&page={$page}");
+        ])->timeout(60 * 20)->get(self::$credentials['baseUrl'] . "/{$service}?limit={$limit}&page={$page}");
 
         $body = $response->body();
 

@@ -34,7 +34,7 @@ class Classes extends Command
             return $acc;
         });
 
-        $currentPage = 1;
+        $currentPage = 82;
 
         $data = AuthLett::getData('classes', 100, $currentPage);
         $decodedData = json_decode($data, true);
