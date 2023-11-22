@@ -49,7 +49,6 @@ class Skus extends Command
 
         $bar = $this->output->createProgressBar($pages);
 
-
         do {
 
             $data = AuthLett::getData('skus', 100, $currentPage);
@@ -97,7 +96,6 @@ class Skus extends Command
                         'brick_id' => $bricks[$segmentData['brick_id']]->id,
                         'brand_id' => $brands[$segmentData['brand_id']]->id
                     ]
-
                 );
             }
 

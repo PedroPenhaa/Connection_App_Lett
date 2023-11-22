@@ -6,6 +6,7 @@ use App\Services\AuthLett;
 use Illuminate\Console\Command;
 use App\Models\Brand;
 use App\Models\Supplier;
+use Illuminate\Support\Facades\DB;
 
 class Brands extends Command
 {
@@ -28,8 +29,7 @@ class Brands extends Command
      */
     public function handle()
     {
-        // Método Principal
-        // Recupera os registros da tabela Family, reduzindo em um array associativo usando o 'externel_id' como chave;
+
         $suppliers = Supplier::get()->reduce(function ($acc, $supplier) {
             $acc[$supplier->external_id] = $supplier;
             return $acc;
@@ -37,30 +37,38 @@ class Brands extends Command
 
         $currentPage = 1;
 
+        $data = AuthLett::getData('brands', 100, $currentPage);
+        $decodedData = json_decode($data, true);
+        $pages = $decodedData['paging']['number_of_pages'];
+
+        $bar = $this->output->createProgressBar($pages);
+
         do {
-            // Obter dados do serviço AuthLett para a página atual
+
             $data = AuthLett::getData('brands', 100, $currentPage);
             $decodedData = json_decode($data, true);
             $pages = $decodedData['paging']['number_of_pages'];
 
-            // Iterando sobre os dados recebidos
+            DB::beginTransaction();
+
             foreach ($decodedData['data'] as $segmentData) {
 
-                //Atualiza ou Cria um registro na tabela.      
                 Brand::updateOrCreate(
-                    // Primeiro Array que será para validação.
+
                     [
                         'external_id' => $segmentData['id'],
                         'supplier_id' => $suppliers[$segmentData['supplier_id']]->id
                     ],
-                    // Array que pode ser alterado os dados
                     [
                         'name' => $segmentData['name'],
                     ]
                 );
             }
-            // Incrementa a página atual para obter os dados da próxima página
+            DB::commit();
+
             $currentPage++;
+
+            $bar->advance();
         } while ($currentPage <= $pages);
     }
 }
