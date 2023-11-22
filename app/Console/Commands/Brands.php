@@ -44,7 +44,6 @@ class Brands extends Command
         $bar = $this->output->createProgressBar($pages);
 
         do {
-
             $data = AuthLett::getData('brands', 100, $currentPage);
             $decodedData = json_decode($data, true);
             $pages = $decodedData['paging']['number_of_pages'];
@@ -54,7 +53,6 @@ class Brands extends Command
             foreach ($decodedData['data'] as $segmentData) {
 
                 Brand::updateOrCreate(
-
                     [
                         'external_id' => $segmentData['id'],
                         'supplier_id' => $suppliers[$segmentData['supplier_id']]->id

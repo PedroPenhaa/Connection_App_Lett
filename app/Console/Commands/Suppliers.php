@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Services\AuthLett;
 use Illuminate\Console\Command;
 use App\Models\Supplier;
+use Illuminate\Support\Facades\DB;
 
 class Suppliers extends Command
 {
@@ -29,16 +30,21 @@ class Suppliers extends Command
     {
         $currentPage = 1;
 
+        $data = AuthLett::getData('suppliers', 10, $currentPage);
+        $decodedData = json_decode($data, true);
+        $pages = $decodedData['paging']['number_of_pages'];
+
+        $bar = $this->output->createProgressBar($pages);
+
         do {
-            // Obter dados do serviço AuthLett
             $data = AuthLett::getData('suppliers', 10, $currentPage);
-            // Decodificar os dados JSON, ajuste conforme necessário
             $decodedData = json_decode($data, true);
             $pages = $decodedData['paging']['number_of_pages'];
 
-            // Verificar se há dados
+            DB::beginTransaction();
+
             if (!empty($decodedData)) {
-                // Iterar sobre os dados e salvá-los na tabela 'segments'
+
                 foreach ($decodedData['data'] as $segmentData) {
                     Supplier::updateOrCreate(
                         ['external_id' => $segmentData['id']],
@@ -49,8 +55,11 @@ class Suppliers extends Command
             } else {
                 $this->info('Nenhum dado para importar.');
             }
+            DB::commit();
 
             $currentPage++;
+
+            $bar->advance();
         } while ($currentPage <= $pages);
     }
 }
