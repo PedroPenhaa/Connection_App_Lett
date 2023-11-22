@@ -6,6 +6,7 @@ use App\Services\AuthLett;
 use Illuminate\Console\Command;
 use App\Models\Family;
 use App\Models\Segment;
+use Illuminate\Support\Facades\DB;
 
 class Familys extends Command
 {
@@ -28,8 +29,6 @@ class Familys extends Command
      */
     public function handle()
     {
-        // Método Principal
-        // Recupera os registros da tabela Segment, reduzindo em um array associativo usando o 'externel_id' como chave;
         $segments = Segment::get()->reduce(function ($acc, $segment) {
             $acc[$segment->external_id] = $segment;
             return $acc;
@@ -37,35 +36,43 @@ class Familys extends Command
 
         $currentPage = 1;
 
+        $data = AuthLett::getData('families', 10, $currentPage);
+        $decodedData = json_decode($data, true);
+        $pages = $decodedData['paging']['number_of_pages'];
+
+        $bar = $this->output->createProgressBar($pages);
+
         do {
-            // Obter dados do serviço AuthLett para a página atual
+
             $data = AuthLett::getData('families', 10, $currentPage);
             $decodedData = json_decode($data, true);
             $pages = $decodedData['paging']['number_of_pages'];
 
-            // Iterando sobre os dados recebidos
+            DB::beginTransaction();
+
             foreach ($decodedData['data'] as $segmentData) {
 
-                //Exibe informações sobre o seguimento
+                /*
                 echo "Segmento Externo - ", "{$segmentData['segment_id']}",
                 " Segmento Interno - ", "{$segments[$segmentData['segment_id']]->id}",
-                "Total Páginas -  $currentPage/$pages ", "\n";
+                "Total Páginas -  $currentPage/$pages ", "\n";*/
 
-                //Atualiza ou Cria um registro na tabela.      
+
                 Family::updateOrCreate(
-                    // Primeiro Array que será para validação.
                     [
                         'external_id' => $segmentData['id'],
                         'segment_id' => $segments[$segmentData['segment_id']]->id
                     ],
-                    // Array que pode ser alterado os dados
                     [
                         'name' => $segmentData['name'],
                     ]
                 );
             }
-            // Incrementa a página atual para obter os dados da próxima página
+            DB::commit();
+
             $currentPage++;
+
+            $bar->advance();
         } while ($currentPage <= $pages);
     }
 }
