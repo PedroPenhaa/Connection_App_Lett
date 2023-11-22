@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('brands', function (Blueprint $table) {
-            $table->id(); // Cria o campo 'id' como chave primária autoincremental
-            $table->string('name'); // Cria o campo 'name' como uma string
+            $table->id();
+            $table->string('name');
+            $table->integer('external_id');
 
             $table->unsignedBigInteger('supplier_id');
             $table->foreign('supplier_id')->references('id')->on('suppliers');
-            // Adicione outros campos conforme necessário
 
-            $table->timestamps(); // Adiciona automaticamente os campos 'created_at' e 'updated_at'
+            $table->timestamps();
         });
     }
 

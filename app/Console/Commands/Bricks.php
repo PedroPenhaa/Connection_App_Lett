@@ -2,8 +2,11 @@
 
 namespace App\Console\Commands;
 
+use App\Services\AuthLett;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Http;
+use App\Models\Brick;
+use App\Models\Classe;
+
 
 class Bricks extends Command
 {
@@ -26,31 +29,39 @@ class Bricks extends Command
      */
     public function handle()
     {
-        $baseUrl = "https://api-content.lett.digital";
-        $service = "access_tokens";
-        $username = "sidnei.simeao@vilanova.com.br";
-        $password = "Sm#8gP4aq.z4jJ";
-        $serviceBricks = "bricks";
-        $limit = 1;
+        // Método Principal
+        // Recupera os registros da tabela Family, reduzindo em um array associativo usando o 'externel_id' como chave;
+        $classes = Classe::get()->reduce(function ($acc, $classe) {
+            $acc[$classe->external_id] = $classe;
+            return $acc;
+        });
 
-        //Autenticação
-        $responseToken = Http::post("{$baseUrl}/{$service}", [
-                'username' => $username,
-                'password' => $password
-        ]);
-        
-        // Obter o token do corpo da resposta// Adicionar o token ao cabeçalho
-        $token = $responseToken->json()['access_token'];
+        $currentPage = 1;
 
-                //---------------------------  Bricks  --------------------------- 
-        
-                $responseBricks = Http::withHeaders([
-                    'Authorization' => 'Bearer ' . $token, 
-                ])->get("{$baseUrl}/{$serviceBricks}?limit=$limit");
-        
-                $bodyBricks = $responseBricks->body();
-                echo("Grupos \n\n");
-                dump($bodyBricks);
-        
+        do {
+            // Obter dados do serviço AuthLett para a página atual
+            $data = AuthLett::getData('bricks', 250, $currentPage);
+            $decodedData = json_decode($data, true);
+            $pages = $decodedData['paging']['number_of_pages'];
+
+            // Iterando sobre os dados recebidos
+            foreach ($decodedData['data'] as $segmentData) {
+
+                //Atualiza ou Cria um registro na tabela.      
+                Brick::updateOrCreate(
+                    // Primeiro Array que será para validação.
+                    [
+                        'external_id' => $segmentData['id'],
+                        'class_id' => $classes[$segmentData['class_id']]->id
+                    ],
+                    // Array que pode ser alterado os dados
+                    [
+                        'name' => $segmentData['name'],
+                    ]
+                );
+            }
+            // Incrementa a página atual para obter os dados da próxima página
+            $currentPage++;
+        } while ($currentPage <= $pages);
     }
 }

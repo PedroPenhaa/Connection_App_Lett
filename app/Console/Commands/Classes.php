@@ -39,24 +39,19 @@ class Classes extends Command
 
         do {
             // Obter dados do serviço AuthLett para a página atual
-            $data = AuthLett::getData('families', 5, $currentPage);
+            $data = AuthLett::getData('classes', 5, $currentPage);
             $decodedData = json_decode($data, true);
             $pages = $decodedData['paging']['number_of_pages'];
 
             // Iterando sobre os dados recebidos
             foreach ($decodedData['data'] as $segmentData) {
 
-                //Exibe informações sobre o seguimento
-                echo "Segmento Externo - ", "{$segmentData['segment_id']}",
-                " Segmento Interno - ", "{$segments[$segmentData['segment_id']]->id}",
-                "Total Páginas -  $currentPage/$pages ", "\n";
-
                 //Atualiza ou Cria um registro na tabela.      
-                Family::updateOrCreate(
+                Classe::updateOrCreate(
                     // Primeiro Array que será para validação.
                     [
                         'external_id' => $segmentData['id'],
-                        'segment_id' => $segments[$segmentData['segment_id']]->id
+                        'family_id' => $familys[$segmentData['family_id']]->id
                     ],
                     // Array que pode ser alterado os dados
                     [
