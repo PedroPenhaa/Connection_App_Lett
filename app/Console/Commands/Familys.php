@@ -18,9 +18,12 @@ class Familys extends Command
         $perPage = 10;
 
         $foreignKey = AuthLett::getForeignkey('App\Models\Segment');
+
         $totalPages = AuthLett::getTotalPages('families', $perPage);
 
         $bar = $this->output->createProgressBar($totalPages);
+
+
 
         do {
 

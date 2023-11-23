@@ -78,12 +78,14 @@ class AuthLett
         return $date;
     }
 
-    public static function getTotalPages(string $endpoint, $perPage)
+    public static function getTotalPages(string $endpoint, int $perPage)
     {
 
         $data = self::getData($endpoint, 1, 1);
 
+
         $data = json_decode($data);
+
 
         return (int) ceil($data->paging->total / $perPage);
     }
