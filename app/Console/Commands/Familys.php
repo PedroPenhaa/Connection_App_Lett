@@ -28,18 +28,17 @@ class Familys extends Command
      */
     public function handle()
     {
-        $foreignKey = AuthLett::getForeignkey('App\Models\Segment');
         $currentPage = 1;
+        $perPage = 10;
 
-        $data = AuthLett::getData('families', 10, $currentPage);
-        $decodedData = json_decode($data, true);
-        $pages = $decodedData['paging']['number_of_pages'];
+        $foreignKey = AuthLett::getForeignkey('App\Models\Segment');
+        $totalPages = AuthLett::getTotalPages('families', $perPage);
 
-        $bar = $this->output->createProgressBar($pages);
+        $bar = $this->output->createProgressBar($totalPages);
 
         do {
 
-            $data = AuthLett::getData('families', 10, $currentPage);
+            $data = AuthLett::getData('families', $perPage, $currentPage);
             $decodedData = json_decode($data, true);
             $pages = $decodedData['paging']['number_of_pages'];
 
@@ -57,10 +56,9 @@ class Familys extends Command
                     ]
                 );
             }
+
             DB::commit();
-
             $currentPage++;
-
             $bar->advance();
         } while ($currentPage <= $pages);
     }
