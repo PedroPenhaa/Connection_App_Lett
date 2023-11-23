@@ -9,12 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 class Skus extends Command
 {
-
     protected $signature = 'Lett:Skus';
-
-
     protected $description = 'Command description';
-
 
     public function handle()
     {

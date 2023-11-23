@@ -9,12 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 class Segments extends Command
 {
-
     protected $signature = 'Lett:Segments';
-
-
     protected $description = 'Command description';
-
 
     public function handle()
     {

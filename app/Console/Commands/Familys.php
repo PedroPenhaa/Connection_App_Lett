@@ -9,12 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 class Familys extends Command
 {
-
     protected $signature = 'Lett:Familys';
-
-
     protected $description = 'Command description';
-
 
     public function handle()
     {

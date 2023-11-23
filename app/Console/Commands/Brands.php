@@ -9,12 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 class Brands extends Command
 {
-
     protected $signature = 'Lett:Brands';
-
-
     protected $description = 'Command description';
-
 
     public function handle()
     {

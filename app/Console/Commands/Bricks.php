@@ -9,12 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 class Bricks extends Command
 {
-
     protected $signature = 'Lett:Bricks';
-
-
     protected $description = 'Command description';
-
 
     public function handle()
     {

@@ -9,12 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 class Classes extends Command
 {
-
     protected $signature = 'Lett:Classes';
-
-
     protected $description = 'Command description';
-
 
     public function handle()
     {

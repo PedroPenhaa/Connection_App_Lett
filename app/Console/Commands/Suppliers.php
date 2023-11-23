@@ -9,12 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 class Suppliers extends Command
 {
-
     protected $signature = 'Lett:Suppliers';
-
-
     protected $description = 'Command description';
-
 
     public function handle()
     {
