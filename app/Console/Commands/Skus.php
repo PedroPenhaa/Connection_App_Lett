@@ -28,20 +28,18 @@ class Skus extends Command
      */
     public function handle()
     {
+        $currentPage = 1;
+        $perPage = 100;
 
         $foreignKeyOne = AuthLett::getForeignkey('App\Models\Brick');
         $foreignKeyTwo = AuthLett::getForeignkey('App\Models\Brand');
-        $currentPage = 1;
+        $totalPages = AuthLett::getTotalPages('brands', $perPage);
 
-        $data = AuthLett::getData('skus', 100, $currentPage);
-        $decodedData = json_decode($data, true);
-        $pages = $decodedData['paging']['number_of_pages'];
-
-        $bar = $this->output->createProgressBar($pages);
+        $bar = $this->output->createProgressBar($totalPages);
 
         do {
 
-            $data = AuthLett::getData('skus', 100, $currentPage);
+            $data = AuthLett::getData('skus', $perPage, $currentPage);
             $decodedData = json_decode($data, true);
             $pages = $decodedData['paging']['number_of_pages'];
 
@@ -60,9 +58,7 @@ class Skus extends Command
             DB::beginTransaction();
 
             foreach ($decodedData['data'] as $segmentData) {
-
                 Sku::updateOrCreate(
-
                     [
                         'ean' => $segmentData['ean'] ?? 000,
                         'external_id' => $segmentData['id'],
@@ -79,9 +75,7 @@ class Skus extends Command
             }
 
             DB::commit();
-
             $currentPage++;
-
             $bar->advance();
         } while ($currentPage <= $pages);
 
