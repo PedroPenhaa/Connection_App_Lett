@@ -29,15 +29,14 @@ class Segments extends Command
     public function handle()
     {
         $currentPage = 1;
+        $perPage = 100;
 
-        $data = AuthLett::getData('segments', 100, $currentPage);
-        $decodedData = json_decode($data, true);
-        $pages = $decodedData['paging']['number_of_pages'];
+        $totalPages = AuthLett::getTotalPages('brands', $perPage);
 
-        $bar = $this->output->createProgressBar($pages);
+        $bar = $this->output->createProgressBar($totalPages);
 
         do {
-            $data = AuthLett::getData('segments', 100, $currentPage);
+            $data = AuthLett::getData('segments', $perPage, $currentPage);
             $decodedData = json_decode($data, true);
             $pages = $decodedData['paging']['number_of_pages'];
 
@@ -54,10 +53,9 @@ class Segments extends Command
             } else {
                 /*$this->info('Nenhum dado para importar.');*/
             }
+
             DB::commit();
-
             $currentPage++;
-
             $bar->advance();
         } while ($currentPage <= $pages);
     }
