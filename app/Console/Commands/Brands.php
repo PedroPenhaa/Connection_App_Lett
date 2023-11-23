@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Services\AuthLett;
 use Illuminate\Console\Command;
 use App\Models\Brand;
-use App\Models\Supplier;
 use Illuminate\Support\Facades\DB;
 
 class Brands extends Command
