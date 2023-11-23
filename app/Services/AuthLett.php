@@ -6,15 +6,11 @@ use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Validation\Rules\Can;
-use Mockery\CountValidator\Exact;
-use PhpParser\Node\Expr\Cast;
 
 class AuthLett
 {
     private static array $credentials  = [];
     private static string $service = "access_tokens";
-
 
     private static function getToken(): string
     {
@@ -55,7 +51,6 @@ class AuthLett
         }
     }
 
-
     public static function getData(string $service, int $limit = 10, int $page)
     {
         //dump($service, $limit, $page);
@@ -78,7 +73,6 @@ class AuthLett
 
         return $body;
     }
-
 
     public static function getForeignkey(string $modelRef)
     {
