@@ -31,16 +31,8 @@ class Skus extends Command
     public function handle()
     {
 
-        $bricks = Brick::get()->reduce(function ($acc, $brick) {
-            $acc[$brick->external_id] = $brick;
-            return $acc;
-        });
-
-        $brands = Brand::get()->reduce(function ($acc, $brand) {
-            $acc[$brand->external_id] = $brand;
-            return $acc;
-        });
-
+        $foreignKeyOne = AuthLett::getForeignkey('App\Models\Brick');
+        $foreignKeyTwo = AuthLett::getForeignkey('App\Models\Brand');
         $currentPage = 1;
 
         $data = AuthLett::getData('skus', 100, $currentPage);
@@ -82,8 +74,8 @@ class Skus extends Command
                         'external_id' => $segmentData['id'],
                         'retailer_sku_match' => json_encode($segmentData['retailer_sku_match']),
                         'content' => json_encode($segmentData['content']),
-                        'brick_id' => $bricks[$segmentData['brick_id']]->id,
-                        'brand_id' => $brands[$segmentData['brand_id']]->id
+                        'brick_id' => $foreignKeyOne[$segmentData['brick_id']]->id,
+                        'brand_id' => $foreignKeyTwo[$segmentData['brand_id']]->id
                     ]
                 );
             }
