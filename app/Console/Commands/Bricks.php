@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Services\AuthLett;
 use Illuminate\Console\Command;
 use App\Models\Brick;
-use App\Models\Classe;
 use Illuminate\Support\Facades\DB;
 
 class Bricks extends Command
