@@ -28,18 +28,18 @@ class Brands extends Command
      */
     public function handle()
     {
-        $foreignKey = AuthLett::getForeignkey('App\Models\Supplier');
         $currentPage = 1;
+        $perPage = 100;
 
-        $data = AuthLett::getData('brands', 100, $currentPage);
-        $decodedData = json_decode($data, true);
-        $pages = $decodedData['paging']['number_of_pages'];
+        $foreignKey = AuthLett::getForeignkey('App\Models\Supplier');
+        $totalPages = AuthLett::getTotalPages('brands', $perPage);
 
-        $bar = $this->output->createProgressBar($pages);
+        $bar = $this->output->createProgressBar($totalPages);
 
         do {
-            $data = AuthLett::getData('brands', 100, $currentPage);
+            $data = AuthLett::getData('brands', $perPage, $currentPage);
             $decodedData = json_decode($data, true);
+
             $pages = $decodedData['paging']['number_of_pages'];
 
             DB::beginTransaction();
@@ -56,10 +56,9 @@ class Brands extends Command
                     ]
                 );
             }
+
             DB::commit();
-
             $currentPage++;
-
             $bar->advance();
         } while ($currentPage <= $pages);
     }
