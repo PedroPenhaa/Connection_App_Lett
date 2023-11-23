@@ -5,8 +5,6 @@ namespace App\Console\Commands;
 use App\Services\AuthLett;
 use Illuminate\Console\Command;
 use App\Models\Sku;
-use App\Models\Brick;
-use App\Models\Brand;
 use Illuminate\Support\Facades\DB;
 
 class Skus extends Command
