@@ -49,4 +49,14 @@ class AuthLett
 
         return $body;
     }
+
+
+    public static function getForeignkey(string $modelRef)
+    {
+        $date = $modelRef::get()->reduce(function ($acc, $item) {
+            $acc[$item->external_id] = $item;
+            return $acc;
+        });
+        return $date;
+    }
 }

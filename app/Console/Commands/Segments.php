@@ -50,9 +50,9 @@ class Segments extends Command
                         ['name' => $segmentData['name']]
                     );
                 }
-                $this->info('Dados importados com sucesso.');
+                /*$this->info('Dados importados com sucesso.');*/
             } else {
-                $this->info('Nenhum dado para importar.');
+                /*$this->info('Nenhum dado para importar.');*/
             }
             DB::commit();
 

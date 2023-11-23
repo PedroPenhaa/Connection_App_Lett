@@ -30,7 +30,7 @@ class Suppliers extends Command
     {
         $currentPage = 1;
 
-        $data = AuthLett::getData('suppliers', 10, $currentPage);
+        $data = AuthLett::getData('suppliers', 25, $currentPage);
         $decodedData = json_decode($data, true);
         $pages = $decodedData['paging']['number_of_pages'];
 
@@ -44,16 +44,15 @@ class Suppliers extends Command
             DB::beginTransaction();
 
             if (!empty($decodedData)) {
-
                 foreach ($decodedData['data'] as $segmentData) {
                     Supplier::updateOrCreate(
                         ['external_id' => $segmentData['id']],
                         ['name' => $segmentData['name']]
                     );
                 }
-                $this->info('Dados importados com sucesso.');
+                /*$this->info('Dados importados com sucesso.');*/
             } else {
-                $this->info('Nenhum dado para importar.');
+                /*$this->info('Nenhum dado para importar.');*/
             }
             DB::commit();
 

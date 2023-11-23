@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Services\AuthLett;
 use Illuminate\Console\Command;
 use App\Models\Classe;
-use App\Models\Family;
 use Illuminate\Support\Facades\DB;
 
 class Classes extends Command
@@ -29,12 +28,9 @@ class Classes extends Command
      */
     public function handle()
     {
-        $familys = Family::get()->reduce(function ($acc, $family) {
-            $acc[$family->external_id] = $family;
-            return $acc;
-        });
 
-        $currentPage = 82;
+        $foreignKey = AuthLett::getForeignkey('App\Models\Family');
+        $currentPage = 1;
 
         $data = AuthLett::getData('classes', 100, $currentPage);
         $decodedData = json_decode($data, true);
@@ -54,7 +50,7 @@ class Classes extends Command
                 Classe::updateOrCreate(
                     [
                         'external_id' => $segmentData['id'],
-                        'family_id' => $familys[$segmentData['family_id']]->id
+                        'family_id' => $foreignKey[$segmentData['family_id']]->id
                     ],
                     [
                         'name' => $segmentData['name'],

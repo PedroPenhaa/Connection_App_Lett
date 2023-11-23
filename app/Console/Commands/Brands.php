@@ -29,12 +29,7 @@ class Brands extends Command
      */
     public function handle()
     {
-
-        $suppliers = Supplier::get()->reduce(function ($acc, $supplier) {
-            $acc[$supplier->external_id] = $supplier;
-            return $acc;
-        });
-
+        $foreignKey = AuthLett::getForeignkey('App\Models\Supplier');
         $currentPage = 1;
 
         $data = AuthLett::getData('brands', 100, $currentPage);
@@ -55,7 +50,7 @@ class Brands extends Command
                 Brand::updateOrCreate(
                     [
                         'external_id' => $segmentData['id'],
-                        'supplier_id' => $suppliers[$segmentData['supplier_id']]->id
+                        'supplier_id' => $foreignKey[$segmentData['supplier_id']]->id
                     ],
                     [
                         'name' => $segmentData['name'],

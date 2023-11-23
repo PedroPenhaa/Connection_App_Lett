@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Services\AuthLett;
 use Illuminate\Console\Command;
 use App\Models\Family;
-use App\Models\Segment;
 use Illuminate\Support\Facades\DB;
 
 class Familys extends Command
@@ -29,11 +28,7 @@ class Familys extends Command
      */
     public function handle()
     {
-        $segments = Segment::get()->reduce(function ($acc, $segment) {
-            $acc[$segment->external_id] = $segment;
-            return $acc;
-        });
-
+        $foreignKey = AuthLett::getForeignkey('App\Models\Segment');
         $currentPage = 1;
 
         $data = AuthLett::getData('families', 10, $currentPage);
@@ -52,16 +47,10 @@ class Familys extends Command
 
             foreach ($decodedData['data'] as $segmentData) {
 
-                /*
-                echo "Segmento Externo - ", "{$segmentData['segment_id']}",
-                " Segmento Interno - ", "{$segments[$segmentData['segment_id']]->id}",
-                "Total Páginas -  $currentPage/$pages ", "\n";*/
-
-
                 Family::updateOrCreate(
                     [
                         'external_id' => $segmentData['id'],
-                        'segment_id' => $segments[$segmentData['segment_id']]->id
+                        'segment_id' => $foreignKey[$segmentData['segment_id']]->id
                     ],
                     [
                         'name' => $segmentData['name'],
